@@ -4,6 +4,7 @@ export type PieceProps = {
     path: (Pos)[],
     cellMap: any,
     move: number,
+    id: number,
 }
 
 

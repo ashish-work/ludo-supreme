@@ -17,7 +17,8 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  onMove: payload => dispatch({type: 'DICE_ROLL', payload})
+  onMove: payload => dispatch({type: 'DICE_ROLL', payload}),
+  addPiece: payload => dispatch({type: 'ADD_PIECE', payload})
 });
 
 const Dice = ({ imageUrl, pressHandler }) => {
@@ -77,14 +78,22 @@ function Game(props) {
     color: COLORS.YELLOW,
     startPos: {
       x: 150,
-      y: 350,
-      cellNumber: 54,
+      y: 450,
+      cellNumber: 58,
     },
+    id: 0
+  }
+  let gotiPropsRed = {
+    color: COLORS.RED,
+    startPos: {
+      x: 200,
+      y: 150,
+      cellNumber: 31,
+    },
+    id: 1
   }
 
-//   useEffect(()=>{
-//     piece
-//   }, [])
+  props.addPiece(gotiProps)
 
   const populatePieces = (config)=> {
     for(let i=0;i<config.colors; i++){
@@ -101,7 +110,8 @@ function Game(props) {
   return (
       <View style={styles.container}>
         <GameBoard></GameBoard>
-        <Piece props={gotiProps}></Piece>
+        <Piece props={gotiProps} key={0}></Piece>
+        <Piece props={gotiPropsRed} key={1}></Piece>
         <Dice imageUrl={diceImage} pressHandler={rollDiceOnTap} />
       </View>
   );

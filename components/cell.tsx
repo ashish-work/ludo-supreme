@@ -11,16 +11,6 @@ const BOX_SIZE = 25; // Define the size of each box in the grid
 
 const Cell = (props: { props: ICell }) => {
   const cellProps = props.props
-  const isSafe = () => {
-    return cellProps.isSafe
-  }
-
-  const getPos = () => {
-    return {
-      x: cellProps.x,
-      y: cellProps.y
-    }
-  }
 
   return (<View
     key={cellProps.index}
