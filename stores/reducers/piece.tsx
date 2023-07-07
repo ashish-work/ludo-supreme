@@ -5,8 +5,11 @@ const initialState = {
 export default (state=initialState, action) => {
     switch(action.type) {
         case "ADD_PIECE":
-            if(!state.pieces.filter((piece) => piece.index ==action.payload.index)){
-                state.pieces.push(action.payload)
+            if(state.pieces.filter((piece) => piece.index ==action.payload.index)){
+                return {
+                    ...state,
+                    pieces: [...state.pieces, action.payload]
+                }
             }
             return state
         case "UPDATE_CURR_POS":

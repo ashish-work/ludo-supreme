@@ -2,7 +2,7 @@
 const initialState = {
     cells: [], 
     move: 0,
-    turn: ""
+    turn: 0,
 }
 
 export const board = (state = initialState, action) =>{
@@ -25,15 +25,16 @@ export const board = (state = initialState, action) =>{
                     pieces: [...selectedCell.pieces, payload.piece]
                 }
             }
-        case "UPDATE_TURN":
-            return {
-                ...state,
-                turn: action.payload.id
-            }
         case "DICE_ROLL":
             return {
                 ...state,
                 move: action.payload.move
+            }
+        case "UPDATE_TURN":
+            const newTurn = state.turn === 1 ? 0: 1
+            return {
+                ...state,
+                turn: newTurn
             }
         default:
             return state
@@ -46,4 +47,9 @@ export const getCells = (state) => {
 
 export const getMove = (state) => {
     return state.board.move
+}
+
+
+export const getTurn = (state) => {
+    return state.board.turn
 }
