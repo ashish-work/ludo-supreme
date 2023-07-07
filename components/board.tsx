@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { View, Animated, StyleSheet, Easing, Text } from 'react-native';
+import { View, StyleSheet, Text } from 'react-native';
 import Cell from './cell'
+import { connect } from 'react-redux';
 
 
 const GRID_SIZE = 5; // Define the size of the grid
@@ -12,17 +13,19 @@ interface ICell {
   index: number,
 }
 
-interface GameBoardProps {
-  cellMapHandler: any
-}
+const mapStateToProps = state => ({
+  ...state.cells
+});
 
-export default function GameBoard(props:{props:GameBoardProps}) {
+const mapDispatchToProps = dispatch => ({
+  onAddCell: payload => dispatch({type: 'ADD_CELL', payload})
+});
+
+function GameBoard(props) {
     const [boardCells, setCells] = useState([])
-    const gameBoardProps = props.props
     // Generate the box positions for the grid
   useEffect(() => {
     const cells = []
-    const cellMap = {}
     let index = 0
     let cell = null
     for (let i = 0; i < 3; i++) {
@@ -33,9 +36,9 @@ export default function GameBoard(props:{props:GameBoardProps}) {
           isSafe: false,
           index: index,
         }
-        cell = <Cell props={cellProps}></Cell>
+        cell = <Cell props={cellProps} key={index}></Cell>
         cells.push(cell)
-        cellMap[index] = cellProps
+        props.onAddCell(cellProps)
         index += 1
       }
     }
@@ -47,9 +50,9 @@ export default function GameBoard(props:{props:GameBoardProps}) {
           isSafe: false,
           index: index,
         }
-        cell = <Cell props={cellProps}></Cell>
-        cellMap[index] = cellProps
+        cell = <Cell props={cellProps} key={index}></Cell>
         cells.push(cell)
+        props.onAddCell(cellProps)
         index += 1
       }
     }
@@ -62,9 +65,9 @@ export default function GameBoard(props:{props:GameBoardProps}) {
           isSafe: false,
           index: index,
         }
-        cell = <Cell props={cellProps}></Cell>
-        cellMap[index] = cellProps
+        cell = <Cell props={cellProps} key={index}></Cell>
         cells.push(cell)
+        props.onAddCell(cellProps)
         index += 1
       }
     }
@@ -77,14 +80,13 @@ export default function GameBoard(props:{props:GameBoardProps}) {
           isSafe: true,
           index: index,
         }
-        cell = <Cell props={cellProps}></Cell>
-        cellMap[index] = cellProps
+        cell = <Cell props={cellProps} key={index}></Cell>
         cells.push(cell)
+        props.onAddCell(cellProps)
         index += 1
       }
     }
     setCells(cells)
-    gameBoardProps.cellMapHandler(cellMap)
 
   }, []);
 
@@ -119,3 +121,7 @@ const styles = StyleSheet.create({
       backgroundColor: 'blue',
     },
   });
+
+
+
+export default connect(mapStateToProps, mapDispatchToProps)(GameBoard);
