@@ -1,7 +1,7 @@
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { COLORS, PieceProps, Pos } from '../stores/types'
-import { BLUE_GOTI_PATH, GREEN_GOTI_PATH, RED_GOTI_PATH, YELLOW_GOTI_PATH } from '../stores/constants'
+import { BLUE_PIECE_PATH, GREEN_PIECE_PATH, RED_PIECE_PATH, YELLOW_PIECE_PATH } from '../stores/constants'
 import { Animated, StyleSheet, View } from 'react-native'
 import React from 'react'
 import { useSelector, connect } from 'react-redux'
@@ -45,16 +45,16 @@ const Piece = (props: { props: PieceProps }) => {
   const populatePath = () => {
     switch (pieceProps.color) {
       case COLORS.RED:
-        path = RED_GOTI_PATH
+        path = RED_PIECE_PATH
         break
       case COLORS.BLUE:
-        path = BLUE_GOTI_PATH
+        path = BLUE_PIECE_PATH
         break
       case COLORS.GREEN:
-        path = GREEN_GOTI_PATH
+        path = GREEN_PIECE_PATH
         break
       case COLORS.YELLOW:
-        path = YELLOW_GOTI_PATH
+        path = YELLOW_PIECE_PATH
         break
     }
   }
@@ -69,7 +69,7 @@ const Piece = (props: { props: PieceProps }) => {
         destCell = cellMap.filter((cell) => cell.index == path[i])[0]
         const move = Animated.timing(animation, {
           toValue: { x: destCell.x, y: destCell.y },
-          duration: 700,
+          duration: 500,
           useNativeDriver: true,
         })
         moves.push(move)

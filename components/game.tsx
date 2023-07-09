@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Image, Pressable } from 'react-native';
+import Lottie from 'lottie-react-native';
 import GameBoard from './board';
 import Piece from './piece';
 import { COLORS } from '../stores/types';
@@ -10,6 +11,7 @@ import DiceThree from '../assets/Three.png'
 import DiceFour from '../assets/Four.png'
 import DiceFive from '../assets/Five.png'
 import DiceSix from '../assets/Six.png'
+// import Confetti from '../assets/canfette.json'
 let count = 1
 
 const mapStateToProps = state => ({
@@ -74,7 +76,7 @@ function Game(props) {
     setMove(count)
   }
 
-  let gotiProps = {
+  let yellowPieceProps = {
     color: COLORS.YELLOW,
     startPos: {
       x: 150,
@@ -83,7 +85,7 @@ function Game(props) {
     },
     id: 0
   }
-  let gotiPropsRed = {
+  let redPieceProps = {
     color: COLORS.RED,
     startPos: {
       x: 200,
@@ -93,7 +95,7 @@ function Game(props) {
     id: 1
   }
 
-  props.addPiece(gotiProps)
+  props.addPiece(yellowPieceProps)
 
   const populatePieces = (config)=> {
     for(let i=0;i<config.colors; i++){
@@ -110,9 +112,10 @@ function Game(props) {
   return (
       <View style={styles.container}>
         <GameBoard></GameBoard>
-        <Piece props={gotiProps} key={0}></Piece>
-        <Piece props={gotiPropsRed} key={1}></Piece>
+        <Piece props={yellowPieceProps} key={0}></Piece>
+        <Piece props={redPieceProps} key={1}></Piece>
         <Dice imageUrl={diceImage} pressHandler={rollDiceOnTap} />
+        {/* <Lottie source={require('../assets/canfette.json')} /> */}
       </View>
   );
 };
