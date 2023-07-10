@@ -1,27 +1,23 @@
-import {View, Text, StyleSheet} from "react-native";
-import React, { useState } from 'react';
-import { FIREBASE_AUTH } from "../../FirebaseConfig";
+import { View, Text } from 'react-native'
+import React, { useEffect } from 'react'
 
-const Login =  () => {
-    const [email, setEmail] = useState();
-    const [password, setPassword] = useState();
-    const [loading, setLoading] = useState();
-    const auth = FIREBASE_AUTH;
+import {ref, set} from 'firebase/database'
+import { FIREBASE_DB } from '../../FirebaseConfig';
 
-    return (
-        <View style={}>
-            <Text>Login</Text>
-        </View>
-    )
+const Login = () => {
+
+    useEffect(()=>{
+        set(ref(FIREBASE_DB, 'todos'), {
+            tilte: 'Wow',
+            done: false
+        })
+    },[])
+
+  return (
+    <View>
+      <Text>Login</Text>
+    </View>
+  )
 }
 
 export default Login
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-      flexDirection: 'row',
-      flexWrap: 'wrap',
-      backgroundColor: 'white',
-    },
-  });
