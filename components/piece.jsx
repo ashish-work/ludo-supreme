@@ -5,7 +5,7 @@ import { BLUE_PIECE_PATH, GREEN_PIECE_PATH, RED_PIECE_PATH, YELLOW_PIECE_PATH } 
 import { Animated, StyleSheet, View } from 'react-native'
 import React from 'react'
 import { useSelector, connect } from 'react-redux'
-import { getTurn, getCells, getMove } from '../stores/reducers/board';
+import { getTurn, getCells, getMove, getTurnNumber } from '../stores/reducers/board';
 
 
 const mapStateToProps = state => ({
@@ -24,6 +24,7 @@ const Piece = (props) => {
   const [moves, setMoves] = useState([])
   const cellSelector = useSelector(getCells)
   const diceMove = useSelector(getMove)
+  const turnNumber = useSelector(getTurnNumber)
   const currentTurn = useSelector(getTurn)
   const [animation] = useState(new Animated.ValueXY({ x: currPos.x, y: currPos.y }));
   const providedStyle = pieceProps.color == COLORS.YELLOW ? styles.dot: styles.dotRed
@@ -31,11 +32,11 @@ const Piece = (props) => {
 
   useEffect(() => {
     populatePath()
-    if(currentTurn===pieceProps.id){
+    if(currentTurn===pieceProps.id && turnNumber > 0){
       move(diceMove)
       props.updateTurn()
     }
-  }, [diceMove])
+  }, [turnNumber])
 
   useEffect(() => {
     Animated.sequence(moves).start();

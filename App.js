@@ -3,7 +3,7 @@ import store from './stores'
 import Game from './components/game'
 import Login from './app/screens/Login'
 import TimerScreen from './app/screens/Room'
-import SignupScreen from './app/screens/SignUp';
+import SignupScreen from './app/screens/Signup';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 

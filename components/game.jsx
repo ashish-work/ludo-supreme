@@ -1,6 +1,5 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image, Pressable } from 'react-native';
-import Lottie from 'lottie-react-native';
 import GameBoard from './board';
 import Piece from './piece';
 import { COLORS } from '../stores/types';
@@ -43,27 +42,27 @@ function Game(props) {
     switch (randomNumber) {
       case 1:
         setDiceImage(DiceOne);
-        setMove(1)
+        setMove(Date.now().toString())
         break;
       case 2:
         setDiceImage(DiceTwo);
-        setMove(2)
+        setMove(Date.now().toString())
         break;
       case 3:
         setDiceImage(DiceThree);
-        setMove(3)
+        setMove(Date.now().toString())
         break;
       case 4:
         setDiceImage(DiceFour);
-        setMove(4)
+        setMove(Date.now().toString())
         break;
       case 5:
         setDiceImage(DiceFive);
-        setMove(5)
+        setMove(Date.now().toString())
         break;
       case 6:
         setDiceImage(DiceSix);
-        setMove(6)
+        setMove(Date.now().toString())
         break;
     }
     props.onMove({
@@ -83,7 +82,8 @@ function Game(props) {
       y: 450,
       cellNumber: 58,
     },
-    id: 0
+    id: 0,
+    move: move
   }
   let redPieceProps = {
     color: COLORS.RED,
@@ -92,7 +92,8 @@ function Game(props) {
       y: 150,
       cellNumber: 31,
     },
-    id: 1
+    id: 1,
+    move: move
   }
 
   props.addPiece(yellowPieceProps)
@@ -115,7 +116,6 @@ function Game(props) {
         <Piece props={yellowPieceProps} key={0}></Piece>
         <Piece props={redPieceProps} key={1}></Piece>
         <Dice imageUrl={diceImage} pressHandler={rollDiceOnTap} />
-        {/* <Lottie source={require('../assets/canfette.json')} /> */}
       </View>
   );
 };

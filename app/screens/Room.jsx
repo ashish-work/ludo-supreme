@@ -1,14 +1,33 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
+import {FIREBASE_AUTH, FIREBASE_DB} from '../../FirebaseConfig';
+import {ref, child, set, query, get, QueryConstraint} from 'firebase/database';
 
 const TimerScreen = ({navigation}) => {
   const [duration, setDuration] = useState(60); // Initial duration in seconds
   const [timer, setTimer] = useState(duration);
+  const [rooms, setRooms] = useState([]);
+
+  const fetchRooms = async () => {
+    try {
+        queryConstraints = [
+
+        ]
+        const snapshot = await get(query(ref(FIREBASE_DB, 'waitingRoom')), limitToLast=1)
+        console.log('snapshot', snapshot)
+        const data = snapshot.val();
+        console.log('Fetched data:', data);
+    } catch(error) {
+        console.log(error)
+    }
+  } 
 
   useEffect(() => {
     const interval = setInterval(() => {
       setTimer((prevTimer) => prevTimer - 1);
     }, 1000);
+
+    fetchRooms()
 
     return () => {
       clearInterval(interval);
