@@ -17,9 +17,9 @@ const mapDispatchToProps = dispatch => ({
   updateTurn: () => dispatch({type: 'UPDATE_TURN'})
 });
 
-const Piece = (props: { props: PieceProps }) => {
+const Piece = (props) => {
   const pieceProps = props.props
-  let path: (number)[] = []
+  let path = []
   const [currPos, setCurrPos] = useState(pieceProps.startPos)
   const [moves, setMoves] = useState([])
   const cellSelector = useSelector(getCells)
@@ -59,7 +59,7 @@ const Piece = (props: { props: PieceProps }) => {
     }
   }
 
-  const move = (diceNumber: number) => {
+  const move = (diceNumber) => {
     let currIndex = path.indexOf(currPos.cellNumber)
     let destIndex = (currIndex + diceNumber) % path.length
     const cellMap = cellSelector

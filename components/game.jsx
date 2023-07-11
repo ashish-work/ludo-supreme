@@ -33,8 +33,8 @@ const Dice = ({ imageUrl, pressHandler }) => {
   )
 }
 function Game(props) {
-  const [move, setMove] = useState(0)
-  const [diceImage, setDiceImage] = useState()
+  const [move, setMove] = useState()
+  const [diceImage, setDiceImage] = useState(DiceOne)
 
   let count = 0
 
