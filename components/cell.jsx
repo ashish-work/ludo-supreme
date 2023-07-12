@@ -1,15 +1,9 @@
 import { View, StyleSheet, Text } from "react-native";
 
-interface ICell {
-  x: number,
-  y: number,
-  isSafe: boolean,
-  index: number,
-}
 
 const BOX_SIZE = 25; // Define the size of each box in the grid
 
-const Cell = (props: { props: ICell }) => {
+const Cell = (props) => {
   const cellProps = props.props
 
   return (<View

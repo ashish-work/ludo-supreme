@@ -10,9 +10,6 @@ const TimerScreen = ({navigation}) => {
 
   const fetchRooms = async () => {
     try {
-        queryConstraints = [
-
-        ]
         const snapshot = await get(query(ref(FIREBASE_DB, 'waitingRoom')), limitToLast=1)
         console.log('snapshot', snapshot)
         const data = snapshot.val();
