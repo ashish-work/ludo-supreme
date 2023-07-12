@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { View, StyleSheet, Image, Pressable } from 'react-native';
 import GameBoard from './board';
 import Piece from './piece';
@@ -10,6 +10,7 @@ import DiceThree from '../assets/Three.png'
 import DiceFour from '../assets/Four.png'
 import DiceFive from '../assets/Five.png'
 import DiceSix from '../assets/Six.png'
+// import Confetti from '../assets/canfette.json'
 let count = 1
 
 const mapStateToProps = state => ({
@@ -31,8 +32,8 @@ const Dice = ({ imageUrl, pressHandler }) => {
   )
 }
 function Game(props) {
-  const [move, setMove] = useState(0)
-  const [diceImage, setDiceImage] = useState()
+  const [move, setMove] = useState()
+  const [diceImage, setDiceImage] = useState(DiceOne)
 
   let count = 0
 
@@ -41,27 +42,27 @@ function Game(props) {
     switch (randomNumber) {
       case 1:
         setDiceImage(DiceOne);
-        setMove(1)
+        setMove(Date.now().toString())
         break;
       case 2:
         setDiceImage(DiceTwo);
-        setMove(2)
+        setMove(Date.now().toString())
         break;
       case 3:
         setDiceImage(DiceThree);
-        setMove(3)
+        setMove(Date.now().toString())
         break;
       case 4:
         setDiceImage(DiceFour);
-        setMove(4)
+        setMove(Date.now().toString())
         break;
       case 5:
         setDiceImage(DiceFive);
-        setMove(5)
+        setMove(Date.now().toString())
         break;
       case 6:
         setDiceImage(DiceSix);
-        setMove(6)
+        setMove(Date.now().toString())
         break;
     }
     props.onMove({
@@ -74,26 +75,28 @@ function Game(props) {
     setMove(count)
   }
 
-  let gotiProps = {
+  let yellowPieceProps = {
     color: COLORS.YELLOW,
     startPos: {
       x: 150,
       y: 450,
       cellNumber: 58,
     },
-    id: 0
+    id: 0,
+    move: move
   }
-  let gotiPropsRed = {
+  let redPieceProps = {
     color: COLORS.RED,
     startPos: {
       x: 200,
       y: 150,
       cellNumber: 31,
     },
-    id: 1
+    id: 1,
+    move: move
   }
 
-  props.addPiece(gotiProps)
+  props.addPiece(yellowPieceProps)
 
   const populatePieces = (config)=> {
     for(let i=0;i<config.colors; i++){
@@ -110,8 +113,8 @@ function Game(props) {
   return (
       <View style={styles.container}>
         <GameBoard></GameBoard>
-        <Piece props={gotiProps} key={0}></Piece>
-        <Piece props={gotiPropsRed} key={1}></Piece>
+        <Piece props={yellowPieceProps} key={0}></Piece>
+        <Piece props={redPieceProps} key={1}></Piece>
         <Dice imageUrl={diceImage} pressHandler={rollDiceOnTap} />
       </View>
   );

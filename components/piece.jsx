@@ -1,11 +1,11 @@
 
-import { useState, useRef, useEffect } from 'react'
+import { useState, useEffect } from 'react'
 import { COLORS, PieceProps, Pos } from '../stores/types'
-import { BLUE_GOTI_PATH, GREEN_GOTI_PATH, RED_GOTI_PATH, YELLOW_GOTI_PATH } from '../stores/constants'
+import { BLUE_PIECE_PATH, GREEN_PIECE_PATH, RED_PIECE_PATH, YELLOW_PIECE_PATH } from '../stores/constants'
 import { Animated, StyleSheet, View } from 'react-native'
 import React from 'react'
 import { useSelector, connect } from 'react-redux'
-import { getTurn, getCells, getMove } from '../stores/reducers/board';
+import { getTurn, getCells, getMove, getTurnNumber } from '../stores/reducers/board';
 
 
 const mapStateToProps = state => ({
@@ -17,13 +17,14 @@ const mapDispatchToProps = dispatch => ({
   updateTurn: () => dispatch({type: 'UPDATE_TURN'})
 });
 
-const Piece = (props: { props: PieceProps }) => {
+const Piece = (props) => {
   const pieceProps = props.props
-  let path: (number)[] = []
+  let path = []
   const [currPos, setCurrPos] = useState(pieceProps.startPos)
   const [moves, setMoves] = useState([])
   const cellSelector = useSelector(getCells)
   const diceMove = useSelector(getMove)
+  const turnNumber = useSelector(getTurnNumber)
   const currentTurn = useSelector(getTurn)
   const [animation] = useState(new Animated.ValueXY({ x: currPos.x, y: currPos.y }));
   const providedStyle = pieceProps.color == COLORS.YELLOW ? styles.dot: styles.dotRed
@@ -31,11 +32,11 @@ const Piece = (props: { props: PieceProps }) => {
 
   useEffect(() => {
     populatePath()
-    if(currentTurn===pieceProps.id){
+    if(currentTurn===pieceProps.id && turnNumber > 0){
       move(diceMove)
       props.updateTurn()
     }
-  }, [diceMove])
+  }, [turnNumber])
 
   useEffect(() => {
     Animated.sequence(moves).start();
@@ -45,21 +46,21 @@ const Piece = (props: { props: PieceProps }) => {
   const populatePath = () => {
     switch (pieceProps.color) {
       case COLORS.RED:
-        path = RED_GOTI_PATH
+        path = RED_PIECE_PATH
         break
       case COLORS.BLUE:
-        path = BLUE_GOTI_PATH
+        path = BLUE_PIECE_PATH
         break
       case COLORS.GREEN:
-        path = GREEN_GOTI_PATH
+        path = GREEN_PIECE_PATH
         break
       case COLORS.YELLOW:
-        path = YELLOW_GOTI_PATH
+        path = YELLOW_PIECE_PATH
         break
     }
   }
 
-  const move = (diceNumber: number) => {
+  const move = (diceNumber) => {
     let currIndex = path.indexOf(currPos.cellNumber)
     let destIndex = (currIndex + diceNumber) % path.length
     const cellMap = cellSelector
@@ -69,7 +70,7 @@ const Piece = (props: { props: PieceProps }) => {
         destCell = cellMap.filter((cell) => cell.index == path[i])[0]
         const move = Animated.timing(animation, {
           toValue: { x: destCell.x, y: destCell.y },
-          duration: 700,
+          duration: 500,
           useNativeDriver: true,
         })
         moves.push(move)

@@ -3,6 +3,7 @@ const initialState = {
     cells: [], 
     move: 0,
     turn: 0,
+    turnNumber: 0
 }
 
 export const board = (state = initialState, action) =>{
@@ -28,7 +29,8 @@ export const board = (state = initialState, action) =>{
         case "DICE_ROLL":
             return {
                 ...state,
-                move: action.payload.move
+                move: action.payload.move,
+                turnNumber: state.turnNumber + 1
             }
         case "UPDATE_TURN":
             const newTurn = state.turn === 1 ? 0: 1
@@ -52,4 +54,8 @@ export const getMove = (state) => {
 
 export const getTurn = (state) => {
     return state.board.turn
+}
+
+export const getTurnNumber = (state) => {
+    return state.board.turnNumber
 }
