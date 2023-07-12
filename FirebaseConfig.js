@@ -7,16 +7,7 @@ import { getDatabase } from "firebase/database"
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
-const firebaseConfig = {
-  apiKey: "AIzaSyA93m8xeZgTj2EA4VmSDmaySMDINHyTZSY",
-  authDomain: "ludosupreme-2497f.firebaseapp.com",
-  databaseURL: "https://ludosupreme-2497f-default-rtdb.firebaseio.com",
-  projectId: "ludosupreme-2497f",
-  storageBucket: "ludosupreme-2497f.appspot.com",
-  messagingSenderId: "797331306903",
-  appId: "1:797331306903:web:f486f2bd50a26d1380ecd2",
-  measurementId: "G-SL378Y2WJ1"
-};
+const firebaseConfig = {};
 
 // Initialize Firebase
 export const FIREBASE_APP = initializeApp(firebaseConfig);
