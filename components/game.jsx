@@ -13,6 +13,7 @@ import DiceSix from '../assets/Six.png'
 import { getUserId } from '../stores/reducers/board';
 import { ref, child, get, query, onValue } from 'firebase/database'
 import { FIREBASE_DB } from '../FirebaseConfig';
+import { useFirebase } from '../providers/firebase';
 let count = 1
 
 const mapStateToProps = state => ({
@@ -44,10 +45,10 @@ function Game(props) {
   const [yellowPieceId, setYellowPieceId] = useState()
   const [redPieceId, setRedPieceId] = useState()
   const [disableDice, setDisableDice] = useState(false)
+  const firebaseService = useFirebase()
 
   const fetchGame = async () => {
-    const snapshot = await get(query(child(ref(FIREBASE_DB, 'users'), userId)))
-    const gameId = snapshot.val()["game"]
+    const gameId = await firebaseService.getGameIdSync(userId)
     const payload = {
       "gameId": gameId
     }
@@ -56,13 +57,8 @@ function Game(props) {
     setGameIdFlag(true)
   }
 
-  // const updateTurn = (turnRef) => {
-  //   const turnRef = child(turnRef)
-  //   set(turnRef)
-  // }
-
-  const fetchTurn = async (turnRef) => {
-    const snapshot = await get(query(turnRef))
+  const fetchTurn = async () => {
+    const turn = await firebaseService.getCurrentTurnSync(gameId)
     return snapshot.val()
   } 
 
@@ -73,11 +69,8 @@ function Game(props) {
 
   useEffect(() => {
     if (gameIdFlag) {
-      const docRef = child(ref(FIREBASE_DB, 'games'), gameId);
-
-      const turnRef = child(child(ref(FIREBASE_DB, 'games'), gameId), 'turn')
-      const currTurn = fetchTurn(turnRef)
-      const turnListener = onValue(turnRef, (snapshot) => {
+      const currTurn = fetchTurn()
+      const turnListener = firebaseService.listenTurnChange(gameId, (snapshot) => {
         const uid = snapshot.val()
         if(uid == userId){
           setDisableDice(false)
@@ -86,35 +79,8 @@ function Game(props) {
         }
       })
 
-
-      // Set up the listener for data changes
-      const listener = onValue(docRef, (snapshot) => {
-        // Retrieve the data from the snapshot
-        const newData = snapshot.val();
-        const players = newData["players"]
-        const currPlayerIndex = players.indexOf(userId)
-        
-        if(currPlayerIndex==0){
-          setYellowPieceId(userId)
-          setRedPieceId(players[1])
-          props.setOpponentUserId({
-            "opponentUserId": players[1]
-          })
-        } else {
-          setYellowPieceId(players[0])
-          setRedPieceId(userId)
-          props.setOpponentUserId(
-            {
-              "opponentUserId": players[0]
-            }
-          )
-        }
-
-      });
-
       // Clean up the listener when the component unmounts
       return () => {
-        listener();
         turnListener();
       };
     }

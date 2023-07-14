@@ -6,6 +6,7 @@ import TimerScreen from './app/screens/Room'
 import SignupScreen from './app/screens/Signup';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import { FirebaseProvider } from './providers/firebase';
 
 const Stack = createNativeStackNavigator();
 
@@ -14,6 +15,7 @@ export default function App() {
 
   return (
     <Provider store={store}>
+      <FirebaseProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName='Login'>
           <Stack.Screen name='Login' component={Login}/>
@@ -22,6 +24,7 @@ export default function App() {
           <Stack.Screen name='Game' component={Game}/>
         </Stack.Navigator>
       </NavigationContainer>
+      </FirebaseProvider>
       {/* <Game/> */}
     </Provider>
   );

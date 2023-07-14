@@ -2,16 +2,15 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 import {createUserWithEmailAndPassword} from 'firebase/auth'
 import { FIREBASE_AUTH } from '../../FirebaseConfig';
+import { useFirebase } from '../../providers/firebase';
 
 const SignupScreen = ({ navigation }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const firebaseService = useFirebase();
 
   const handleSignup = ({ navigation }) => {
-    // Perform signup logic here
-    console.log('Email:', email);
-    console.log('Password:', password);
-    createUserWithEmailAndPassword(FIREBASE_AUTH, email, password).then((userCredential) => {
+    firebaseService.createUserWithEmailAndPassword(email, password).then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
         navigation.navigate('Login')
