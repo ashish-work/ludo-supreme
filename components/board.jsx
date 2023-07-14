@@ -6,12 +6,6 @@ import { connect } from 'react-redux';
 
 const GRID_SIZE = 5; // Define the size of the grid
 const BOX_SIZE = 25; // Define the size of each box in the grid
-interface ICell {
-  x: number,
-  y: number,
-  isSafe: boolean,
-  index: number,
-}
 
 const mapStateToProps = state => ({
   ...state.cells
@@ -30,7 +24,7 @@ function GameBoard(props) {
     let cell = null
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 6; j++) {
-        let cellProps: ICell = {
+        let cellProps = {
           x: (j * BOX_SIZE + 0),
           y: (i * BOX_SIZE + 275),
           isSafe: false,
@@ -44,7 +38,7 @@ function GameBoard(props) {
     }
     for (let j = 0; j < 3; j++) {
       for (let i = 0; i < 6; i++) {
-        let cellProps: ICell = {
+        let cellProps = {
           x: j * BOX_SIZE + 150,
           y: i * BOX_SIZE + 125,
           isSafe: false,
@@ -59,7 +53,7 @@ function GameBoard(props) {
 
     for (let i = 0; i < 3; i++) {
       for (let j = 0; j < 6; j++) {
-        let cellProps: ICell = {
+        let cellProps = {
           x: j * BOX_SIZE + 225,
           y: i * BOX_SIZE + 275,
           isSafe: false,
@@ -74,7 +68,7 @@ function GameBoard(props) {
 
     for (let j = 0; j < 3; j++) {
       for (let i = 0; i < 6; i++) {
-        let cellProps: ICell = {
+        let cellProps = {
           x: j * BOX_SIZE + 150,
           y: i * BOX_SIZE + 350,
           isSafe: true,

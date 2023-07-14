@@ -5,20 +5,35 @@ import { View, TextInput, Button, StyleSheet } from 'react-native';
 import {FIREBASE_AUTH, FIREBASE_DB} from '../../FirebaseConfig';
 import {ref, child, set} from 'firebase/database';
 import {signInWithEmailAndPassword} from 'firebase/auth';
+import { connect } from 'react-redux';
+import { useFirebase } from '../../providers/firebase';
 
 
-const LoginScreen = ({ navigation }) => {
+const mapStateToProps = state => ({
+  ...state.board
+});
+
+const mapDispatchToProps = dispatch => ({
+  onUserLogin: payload => dispatch({ type: 'SET_USER', payload })
+});
+
+const LoginScreen = (props) => {
+  const navigation = props.navigation
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const firebaseService = useFirebase()
 
   const handleLogin = () => {
     // Perform login logic here
-    signInWithEmailAndPassword(FIREBASE_AUTH, email, password).then((userCredential) => {
+    firebaseService.signInWithEmailAndPassword(email, password).then((userCredential) => {
         // Signed in r
         const user = userCredential.user;
-        set(child(ref(FIREBASE_DB, 'loggedInUsers'), user.uid), {
-          title: "this is a test"
-        });
+        const payload = {
+          "userId": user.uid,
+        }
+
+        props.onUserLogin(payload)
+        firebaseService.addLoggedInUser(user.uid)
         navigation.navigate('Game')
       })
       .catch((error) => {
@@ -67,4 +82,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default LoginScreen;
+export default connect(mapStateToProps, mapDispatchToProps)(LoginScreen);

@@ -3,7 +3,10 @@ const initialState = {
     cells: [], 
     move: 0,
     turn: 0,
-    turnNumber: 0
+    turnNumber: 0,
+    userId: "",
+    gameId: "",
+    opponentUserId: "",
 }
 
 export const board = (state = initialState, action) =>{
@@ -38,6 +41,21 @@ export const board = (state = initialState, action) =>{
                 ...state,
                 turn: newTurn
             }
+        case "SET_USER":
+            return {
+                ...state,
+                userId: action.payload.userId
+            }
+        case "SET_GAME_ID":
+            return {
+                ...state,
+                gameId: action.payload.gameId
+            }
+        case "SET_OPPONENT_USER_ID":
+            return {
+                ...state,
+                opponentUserId: action.payload.opponentUserId
+            }
         default:
             return state
     }
@@ -58,4 +76,17 @@ export const getTurn = (state) => {
 
 export const getTurnNumber = (state) => {
     return state.board.turnNumber
+}
+
+
+export const getUserId = (state) => {
+    return state.board.userId
+}
+
+export const getGameId = (state) => {
+    return state.board.gameId
+}
+
+export const getOpponentUserId = (state) => {
+    return state.board.opponentUserId
 }
