@@ -10,7 +10,7 @@ const SignupScreen = ({ navigation }) => {
   const firebaseService = useFirebase();
 
   const handleSignup = ({ navigation }) => {
-    firebaseService.createUserWithEmailAndPassword(email, password).then((userCredential) => {
+    firebaseService.createUserWithEmailAndPassword(demail, password).then((userCredential) => {
         // Signed in 
         const user = userCredential.user;
         navigation.navigate('Login')
