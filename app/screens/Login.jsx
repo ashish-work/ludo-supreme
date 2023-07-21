@@ -2,11 +2,10 @@ import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet } from 'react-native';
 // import {ref, set} from 'firebase/database'
 // import { FIREBASE_DB } from '../../FirebaseConfig';
-import {FIREBASE_AUTH, FIREBASE_DB} from '../../FirebaseConfig';
-import {ref, child, set} from 'firebase/database';
-import {signInWithEmailAndPassword} from 'firebase/auth';
 import { connect } from 'react-redux';
 import { useFirebase } from '../../providers/firebase';
+import {io} from "socket.io-client";
+const socket = io.connect("https://fedd-122-172-82-83.ngrok-free.app")
 
 
 const mapStateToProps = state => ({
@@ -34,6 +33,9 @@ const LoginScreen = (props) => {
 
         props.onUserLogin(payload)
         firebaseService.addLoggedInUser(user.uid)
+
+        handleSocketConnection()
+
         navigation.navigate('Game')
       })
       .catch((error) => {
@@ -44,6 +46,14 @@ const LoginScreen = (props) => {
         // ..
       });
   };
+
+  const handleSocketConnection = () => {
+
+    socket.emit('joinRoom')
+    socket.on('chat', (msg)=>{
+        console.log(msg)
+    });
+  }
 
   return (
     <View style={styles.container}>
