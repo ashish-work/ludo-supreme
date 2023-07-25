@@ -7,6 +7,7 @@ import SignupScreen from './app/screens/Signup';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import { FirebaseProvider } from './providers/firebase';
+import {socket} from './services/socket/socketService'
 
 const Stack = createNativeStackNavigator();
 

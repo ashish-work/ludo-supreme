@@ -3,29 +3,33 @@ import { View, Text, StyleSheet } from 'react-native';
 import {FIREBASE_AUTH, FIREBASE_DB} from '../../FirebaseConfig';
 import {ref, child, set, query, get, QueryConstraint} from 'firebase/database';
 import { useFirebase } from '../../providers/firebase';
+import socket from '../../services/socket/socketService';
+import { getUserId } from '../../stores/reducers/board';
+import { useSelector } from 'react-redux';
 
 const TimerScreen = ({navigation}) => {
-  const [duration, setDuration] = useState(60); // Initial duration in seconds
+  const [duration, setDuration] = useState(30); // Initial duration in seconds
   const [timer, setTimer] = useState(duration);
   const [rooms, setRooms] = useState([]);
   const firebaseService = useFirebase()
+  const userId = useSelector(getUserId)
 
-  const fetchRooms = async () => {
-    try {
-        console.log('snapshot', snapshot)
-        const data = await firebaseService.getWaitingRoomsSync()
-        console.log('Fetched data:', data);
-    } catch(error) {
-        console.log(error)
-    }
-  } 
+  // const fetchRooms = async () => {
+  //   try {
+  //       console.log('snapshot', snapshot)
+  //       const data = await firebaseService.getWaitingRoomsSync()
+  //       console.log('Fetched data:', data);
+  //   } catch(error) {
+  //       console.log(error)
+  //   }
+  // } 
 
   useEffect(() => {
     const interval = setInterval(() => {
       setTimer((prevTimer) => prevTimer - 1);
     }, 1000);
 
-    fetchRooms()
+    // fetchRooms()
 
     return () => {
       clearInterval(interval);
@@ -35,7 +39,8 @@ const TimerScreen = ({navigation}) => {
   useEffect(() => {
     if (timer === 0) {
       // Timer completed, perform necessary actions here
-      console.log('Timer completed!');
+      // console.log('Timer completed!');
+      socket.emit('joinRoom', userId)
       navigation.navigate('Game')
     }
   }, [timer]);

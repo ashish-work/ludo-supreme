@@ -11,20 +11,19 @@ import DiceFour from '../assets/Four.png'
 import DiceFive from '../assets/Five.png'
 import DiceSix from '../assets/Six.png'
 import { getUserId } from '../stores/reducers/board';
+import { getPlayers, getCurrentTurn } from '../stores/reducers/gameState';
 import { ref, child, get, query, onValue } from 'firebase/database'
 import { FIREBASE_DB } from '../FirebaseConfig';
 import { useFirebase } from '../providers/firebase';
 let count = 1
 
 const mapStateToProps = state => ({
-  ...state.board
+  ...state.gameState
 });
 
 const mapDispatchToProps = dispatch => ({
   onMove: payload => dispatch({ type: 'DICE_ROLL', payload }),
   addPiece: payload => dispatch({ type: 'ADD_PIECE', payload }),
-  onGameId: payload => dispatch({type: 'SET_GAME_ID', payload}),
-  setOpponentUserId: payload => dispatch({type:'SET_OPPONENT_USER_ID', payload})
 });
 
 const Dice = ({ imageUrl, pressHandler, disableDiceRoll }) => {
@@ -39,55 +38,17 @@ const Dice = ({ imageUrl, pressHandler, disableDiceRoll }) => {
 function Game(props) {
   const [move, setMove] = useState()
   const [diceImage, setDiceImage] = useState(DiceOne)
-  const [gameId, setGameId] = useState()
-  const userId = useSelector(getUserId)
-  const [gameIdFlag, setGameIdFlag] = useState(false);
-  const [yellowPieceId, setYellowPieceId] = useState()
-  const [redPieceId, setRedPieceId] = useState()
   const [disableDice, setDisableDice] = useState(false)
+  const players = useSelector(getPlayers)
+  const currentTurn = useSelector(getCurrentTurn)
+  const userId = useSelector(getUserId)
   const firebaseService = useFirebase()
 
-  const fetchGame = async () => {
-    const gameId = await firebaseService.getGameIdSync(userId)
-    const payload = {
-      "gameId": gameId
-    }
-    props.onGameId(payload)
-    setGameId(gameId)
-    setGameIdFlag(true)
-  }
 
-  const fetchTurn = async () => {
-    const turn = await firebaseService.getCurrentTurnSync(gameId)
-    return snapshot.val()
-  } 
-
-  useEffect(() => {
-    fetchGame()
-
-  }, [])
-
-  useEffect(() => {
-    if (gameIdFlag) {
-      const currTurn = fetchTurn()
-      const turnListener = firebaseService.listenTurnChange(gameId, (snapshot) => {
-        const uid = snapshot.val()
-        if(uid == userId){
-          setDisableDice(false)
-        } else {
-          setDisableDice(true)
-        }
-      })
-
-      // Clean up the listener when the component unmounts
-      return () => {
-        turnListener();
-      };
-    }
-  }, [gameIdFlag])
   let count = 0
 
   const rollDiceOnTap = () => {
+
     let randomNumber = Math.floor(Math.random() * 6) + 1;
     switch (randomNumber) {
       case 1:
@@ -118,11 +79,7 @@ function Game(props) {
     props.onMove({
       move: randomNumber
     })
-  }
 
-  const handlerMove = (event) => {
-    count += 1
-    setMove(count)
   }
 
   let yellowPieceProps = {
@@ -147,24 +104,13 @@ function Game(props) {
   }
 
   props.addPiece(yellowPieceProps)
-
-  const populatePieces = (config) => {
-    for (let i = 0; i < config.colors; i++) {
-      if (config.colors[i] == COLORS.RED) {
-
-      }
-    }
-  }
-
-  const onClickHandler = () => {
-    setMove(move + 1)
-  }
+  props.addPiece(redPieceProps)
 
   return (
     <View style={styles.container}>
       <GameBoard></GameBoard>
-      <Piece props={yellowPieceProps} uid={yellowPieceId} key={0}></Piece>
-      <Piece props={redPieceProps} uid={redPieceId} key={1}></Piece>
+      <Piece props={yellowPieceProps} uid="Ck9DVkbcmjRetQIwGYZE9ZqHcT23" key={0}></Piece>
+      <Piece props={redPieceProps} uid="yE4QLctMLtb021UuNkirMtwcoEW2" key={1}></Piece>
       <Dice imageUrl={diceImage} pressHandler={rollDiceOnTap} disableDiceRoll={disableDice}/>
     </View>
   );

@@ -4,8 +4,9 @@ import { View, TextInput, Button, StyleSheet } from 'react-native';
 // import { FIREBASE_DB } from '../../FirebaseConfig';
 import { connect } from 'react-redux';
 import { useFirebase } from '../../providers/firebase';
-import {io} from "socket.io-client";
-const socket = io.connect("https://fedd-122-172-82-83.ngrok-free.app")
+// import {io} from "socket.io-client";
+// const socket = io.connect("https://1a1d-122-172-83-130.ngrok-free.app")
+import socket from '../../services/socket/socketService'
 
 
 const mapStateToProps = state => ({
@@ -34,9 +35,9 @@ const LoginScreen = (props) => {
         props.onUserLogin(payload)
         firebaseService.addLoggedInUser(user.uid)
 
-        handleSocketConnection()
+        handleSocketConnection(user.uid)
 
-        navigation.navigate('Game')
+        navigation.navigate('Room')
       })
       .catch((error) => {
         console.log('error', error)
@@ -47,12 +48,8 @@ const LoginScreen = (props) => {
       });
   };
 
-  const handleSocketConnection = () => {
-
-    socket.emit('joinRoom')
-    socket.on('chat', (msg)=>{
-        console.log(msg)
-    });
+  const handleSocketConnection = (uid) => {
+    socket.connect()
   }
 
   return (
