@@ -1,4 +1,5 @@
 
+import {UPDATE_TURN, UPDATE_MOVE, ADD_PLAYERS} from '../actions/gameActions'
 const initialState = {
     cells: [], 
     move: 0,
@@ -7,6 +8,8 @@ const initialState = {
     userId: "",
     gameId: "",
     opponentUserId: "",
+    currentTurn: "",
+    players: []
 }
 
 export const board = (state = initialState, action) =>{
@@ -35,12 +38,6 @@ export const board = (state = initialState, action) =>{
                 move: action.payload.move,
                 turnNumber: state.turnNumber + 1
             }
-        case "UPDATE_TURN":
-            const newTurn = state.turn === 1 ? 0: 1
-            return {
-                ...state,
-                turn: newTurn
-            }
         case "SET_USER":
             return {
                 ...state,
@@ -55,6 +52,11 @@ export const board = (state = initialState, action) =>{
             return {
                 ...state,
                 opponentUserId: action.payload.opponentUserId
+            }
+        case ADD_PLAYERS:
+            return {
+                ...state,
+                players: action.payload.players
             }
         default:
             return state
@@ -89,4 +91,12 @@ export const getGameId = (state) => {
 
 export const getOpponentUserId = (state) => {
     return state.board.opponentUserId
+}
+
+export const getCurrentTurn = (state) => {
+    return state.board.currentTurn
+}
+
+export const getPlayers = (state) => {
+    return state.board.players
 }

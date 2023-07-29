@@ -8,10 +8,11 @@ import { useSelector, connect } from 'react-redux'
 import { getTurn, getCells, getMove, getTurnNumber, getUserId, getGameId, getOpponentUserId } from '../stores/reducers/board';
 import { FIREBASE_DB } from '../FirebaseConfig'
 import { ref, onValue, child, get, query, set } from 'firebase/database'
+import { getCurrentMove, getCurrentTurn } from '../stores/reducers/gameState'
 
 
 const mapStateToProps = state => ({
-  ...state.pieces
+  ...state.gameState, ...state.board
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -26,83 +27,41 @@ const Piece = (props) => {
   const [currPos, setCurrPos] = useState(pieceProps.startPos)
   const [moves, setMoves] = useState([])
   const cellSelector = useSelector(getCells)
-  const diceMove = useSelector(getMove)
-  const turnNumber = useSelector(getTurnNumber)
-  const userId = useSelector(getUserId)
-  const currentTurn = useSelector(getTurn)
-  const gameId = useSelector(getGameId)
+  // const diceMove = useSelector(getMove)
+  // const turnNumber = useSelector(getTurnNumber)
+  // const gameId = useSelector(getGameId)
   const [animation] = useState(new Animated.ValueXY({ x: currPos.x, y: currPos.y }));
   const providedStyle = pieceProps.color == COLORS.YELLOW ? styles.dot : styles.dotRed
-  const [turn, setTurn] = useState()
-  const opponentUserId = useSelector(getOpponentUserId)
 
-  const fetchTurn = async () => {
-    const turnRef = child(child(ref(FIREBASE_DB, 'games'), gameId), 'turn')
-    const snapshot = await get(query(turnRef))
-    const turnValue = snapshot.val()
-    setTurn(turnValue)
-  }
+  const currentTurn = useSelector(getCurrentTurn)
+  const currentMove = useSelector(getCurrentMove)
+  const userId = useSelector(getUserId)
 
-  const updatePlayerMove = (diceMove) => {
-    if(userId == uid){
-    set(child(child(child(ref(FIREBASE_DB, 'games'), gameId), uid), 'move'), {
-      "move": diceMove
-    })
-  }
-  }
-
-  const updateTurn = () => {
-    if(opponentUserId){
-      set(child(child(ref(FIREBASE_DB, 'games'), gameId), 'turn'),opponentUserId)
-    }
-  }
-  useEffect(() => {
+  useEffect(()=>{
+    console.log(userId + ': populate path')
     populatePath()
-    if(gameId){
-      fetchTurn()
-    }
-    if(turn){
-      if (turn == uid && turnNumber > 0) {
-        move(diceMove)
-        updateTurn()
-        updatePlayerMove(diceMove)
-      }
-    }
-  }, [turnNumber])
-
-
-  // useEffect(() => {
-  //   if(turn){
-  //     if (turn == uid && turnNumber > 0) {
-  //       console.log('diceMove', diceMove)
-  //       move(diceMove)
-  //       // props.updateTurn()
-  //       updatePlayerMove(diceMove)
-  //     }
-  //   }
-  // }, [turn])
+  }, [])
 
   useEffect(() => {
     Animated.sequence(moves).start();
     setMoves([])
   }, [currPos])
 
-  useEffect(() => {
-    if (uid) {
-      const listener = onValue(child(child(child(ref(FIREBASE_DB, 'games'), gameId), uid), 'move'), (snapshot) => {
-        const diceMove = snapshot.val()
-        // if (userId == uid) {
-          move(diceMove["move"])
-        // }
-      })
-
-      return () => {
-        listener();
-      }
+  useEffect(()=>{
+    console.log(userId + ': move updated', currentMove)
+    populatePath()
+    if(userId == 'yE4QLctMLtb021UuNkirMtwcoEW2path'){
+      console.log(userId + ' -> uid', currentTurn)
+      console.log(userId + ' -> currentMove', currentMove)
     }
-  }, [])
+    console.log()
+    if(uid==currentTurn){
+      move(currentMove)
+    }
+  }, [currentMove])
 
   const populatePath = () => {
+    console.log('pieceProps.color', pieceProps.color)
     switch (pieceProps.color) {
       case COLORS.RED:
         path = RED_PIECE_PATH
@@ -120,6 +79,7 @@ const Piece = (props) => {
   }
 
   const move = (diceNumber) => {
+    console.log(userId + 'path', path)
     let currIndex = path.indexOf(currPos.cellNumber)
     let destIndex = (currIndex + diceNumber) % path.length
     const cellMap = cellSelector
@@ -145,8 +105,6 @@ const Piece = (props) => {
           capture(destCell)
         }
       }
-
-      //updateCell
     }
   }
 
