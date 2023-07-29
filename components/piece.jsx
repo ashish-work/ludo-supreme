@@ -12,7 +12,7 @@ import { getCurrentMove, getCurrentTurn } from '../stores/reducers/gameState'
 
 
 const mapStateToProps = state => ({
-  ...state.pieces
+  ...state.gameState, ...state.board
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -29,13 +29,18 @@ const Piece = (props) => {
   const cellSelector = useSelector(getCells)
   // const diceMove = useSelector(getMove)
   // const turnNumber = useSelector(getTurnNumber)
-  const userId = useSelector(getUserId)
   // const gameId = useSelector(getGameId)
   const [animation] = useState(new Animated.ValueXY({ x: currPos.x, y: currPos.y }));
   const providedStyle = pieceProps.color == COLORS.YELLOW ? styles.dot : styles.dotRed
 
   const currentTurn = useSelector(getCurrentTurn)
   const currentMove = useSelector(getCurrentMove)
+  const userId = useSelector(getUserId)
+
+  useEffect(()=>{
+    console.log(userId + ': populate path')
+    populatePath()
+  }, [])
 
   useEffect(() => {
     Animated.sequence(moves).start();
@@ -43,13 +48,20 @@ const Piece = (props) => {
   }, [currPos])
 
   useEffect(()=>{
-    console.log('currentTurn', currentTurn)
+    console.log(userId + ': move updated', currentMove)
+    populatePath()
+    if(userId == 'yE4QLctMLtb021UuNkirMtwcoEW2path'){
+      console.log(userId + ' -> uid', currentTurn)
+      console.log(userId + ' -> currentMove', currentMove)
+    }
+    console.log()
     if(uid==currentTurn){
       move(currentMove)
     }
-  }, [currentTurn, currentMove])
+  }, [currentMove])
 
   const populatePath = () => {
+    console.log('pieceProps.color', pieceProps.color)
     switch (pieceProps.color) {
       case COLORS.RED:
         path = RED_PIECE_PATH
@@ -67,6 +79,7 @@ const Piece = (props) => {
   }
 
   const move = (diceNumber) => {
+    console.log(userId + 'path', path)
     let currIndex = path.indexOf(currPos.cellNumber)
     let destIndex = (currIndex + diceNumber) % path.length
     const cellMap = cellSelector
@@ -92,8 +105,6 @@ const Piece = (props) => {
           capture(destCell)
         }
       }
-
-      //updateCell
     }
   }
 

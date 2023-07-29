@@ -15,7 +15,11 @@ import { getPlayers, getCurrentTurn } from '../stores/reducers/gameState';
 import { ref, child, get, query, onValue } from 'firebase/database'
 import { FIREBASE_DB } from '../FirebaseConfig';
 import { useFirebase } from '../providers/firebase';
+import { TimerProgressBar } from './timerProgressBar';
+
 let count = 1
+
+import socket from '../services/socket/socketService'
 
 const mapStateToProps = state => ({
   ...state.gameState
@@ -26,26 +30,54 @@ const mapDispatchToProps = dispatch => ({
   addPiece: payload => dispatch({ type: 'ADD_PIECE', payload }),
 });
 
-const Dice = ({ imageUrl, pressHandler, disableDiceRoll }) => {
+const Dice = ({ imageUrl, pressHandler }) => {
+  const [disableDice, setDisableDice] = useState(false)
+  const currentTurn = useSelector(getCurrentTurn)
+  const userId = useSelector(getUserId)
+
+  useEffect(()=>{
+    if(currentTurn !== userId){
+      setDisableDice(true)
+    }
+
+    if(currentTurn === userId){
+      setDisableDice(false)
+    }
+
+  }, [currentTurn])
+
   return (
     <View style={styles.diceContainer}>
-      <Pressable onPress={pressHandler} disabled={disableDiceRoll}>
+      <Pressable onPress={pressHandler} disabled={disableDice}>
         <Image style={styles.diceImage} source={imageUrl} />
       </Pressable>
     </View>
   )
 }
+
+connect(mapStateToProps)(Game)
+
 function Game(props) {
   const [move, setMove] = useState()
   const [diceImage, setDiceImage] = useState(DiceOne)
-  const [disableDice, setDisableDice] = useState(false)
-  const players = useSelector(getPlayers)
+  const firebaseService = useFirebase()
   const currentTurn = useSelector(getCurrentTurn)
   const userId = useSelector(getUserId)
-  const firebaseService = useFirebase()
-
+  const [showTimer, setShowTimer] = useState(true)
 
   let count = 0
+
+  useEffect(()=>{
+    if(currentTurn !== userId){
+      setShowTimer(false)
+    }
+
+    if(currentTurn === userId){
+      setShowTimer(true)
+    }
+
+  }, [currentTurn])
+
 
   const rollDiceOnTap = () => {
 
@@ -76,6 +108,8 @@ function Game(props) {
         setMove(Date.now().toString())
         break;
     }
+    socket.emit('updateMove', randomNumber, (err) => console.log(err))
+
     props.onMove({
       move: randomNumber
     })
@@ -111,7 +145,8 @@ function Game(props) {
       <GameBoard></GameBoard>
       <Piece props={yellowPieceProps} uid="Ck9DVkbcmjRetQIwGYZE9ZqHcT23" key={0}></Piece>
       <Piece props={redPieceProps} uid="yE4QLctMLtb021UuNkirMtwcoEW2" key={1}></Piece>
-      <Dice imageUrl={diceImage} pressHandler={rollDiceOnTap} disableDiceRoll={disableDice}/>
+      <Dice imageUrl={diceImage} pressHandler={rollDiceOnTap}/>
+      <TimerProgressBar totalTime={10000} interval={50} showTimer={showTimer} />
     </View>
   );
 };

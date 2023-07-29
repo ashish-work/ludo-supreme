@@ -10,8 +10,6 @@ export const gameState = (state=initialState, action) => {
 
     switch(action.type){
         case "INIT":
-            console.log('game state action')
-            console.log(action.payload)
             return {
                 ...state,
                 players: action.payload.players,
@@ -20,13 +18,12 @@ export const gameState = (state=initialState, action) => {
                 gameRoomId: action.payload.gameRoomId,
             }
         case "UPDATE_TURN":
-            console.log('update turn')
-            console.log(state)
             return {
                 ...state,
                 currentTurn: action.payload
             }
         case "UPDATE_MOVE":
+            console.log('update move state', state)
             return {
                 ...state,
                 currentMove: action.payload
